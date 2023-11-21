@@ -126,15 +126,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   bottom: {
-    width: "100%",
-    height: 40,
+    height: 60,
     borderRadius: 10,
     justifyContent: "space-between",
-    padding: 30,
     backgroundColor: "black",
     flexDirection: "row",
     alignItems: "center",
-    margin: "auto",
   },
   tasks: {
     marginBottom: 30,
