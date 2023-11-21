@@ -9,15 +9,20 @@ const Task = ({ title, date, onPress }) => {
   }
 
   return (
-    <Pressable style={styles.task} onPress={toggle}>
+    <View style={styles.task} onPress={toggle}>
       <View>
         <Text style={styles.taskTitle}>{title}</Text>
         <Text style={styles.taskDate}>{date}</Text>
       </View>
       <View style={styles.taskButton}>
-        <Button icon="expand-more" size={"sm"} iconColor="white" />
+        <Button
+          icon="expand-more"
+          size={"sm"}
+          iconColor="white"
+          onPress={onPress}
+        />
       </View>
-    </Pressable>
+    </View>
   );
 };
 
@@ -42,7 +47,6 @@ const styles = StyleSheet.create({
     textShadowColor: "black",
     textShadowRadius: 3,
   },
-  taskButton: {},
 });
 
 export default Task;

@@ -4,7 +4,6 @@ import {
   Text,
   FlatList,
   TextInput,
-  Pressable,
   StyleSheet,
 } from "react-native";
 
@@ -21,7 +20,7 @@ function getDate() {
 }
 
 // dummy object
-const object = {
+const dummyObject = {
   key: 1,
   title: "Dentist Appt",
   description: "Will be painful",
@@ -35,8 +34,33 @@ const object = {
 };
 
 export default function App() {
-  const [list, setList] = useState([]);
+  const [list, setList] = useState([dummyObject]);
   const [title, setTitle] = useState("");
+
+  function addTask() {
+    if (title === "") {
+      return;
+    }
+    const newList = list.concat({
+      key: list.length + 1,
+      title: title,
+      description: "",
+      date: getDate(),
+      done: false,
+      selected: false,
+      location: {
+        lat: 0,
+        lng: 0,
+      },
+    });
+
+    setTitle("");
+    setList(newList);
+  }
+
+  const renderTask = ({ item }) => (
+    <Task title={item.title} date={item.date} />
+  );
 
   return (
     <View style={styles.container}>
@@ -46,39 +70,39 @@ export default function App() {
           <TextInput
             label="Title"
             maxLength={30}
-            inlineImageLeft="search_icon"
             style={styles.input}
-            onChangeText={(text) => setTitle(text)}
-            onSubmitEditing={() => {
-              // TODO: add task to list
-            }}
+            inlineImageLeft="search_icon"
+            placeholderTextColor={"gray"}
             placeholder="Enter task title..."
+            onChangeText={(text) => setTitle(text)}
+            value={title}
           ></TextInput>
           <Button
             label="Add"
-            icon="add-box"
+            onPress={() => addTask()}
+            icon="library-add"
             iconColor={"white"}
             backgroundColor={"green"}
           />
         </View>
         <View style={styles.tasks}>
-          <Task title={object.title} date={object.date} />
-          <Task title={object.title} date={object.date} />
-          <Task title={object.title} date={object.date} />
+          <FlatList data={list} renderItem={renderTask} />
         </View>
-        <View style={styles.bottom}>
-          <Button label="Menu" icon="menu" iconColor={"white"} />
-          <Button
-            label="location"
-            icon="location-on"
-            iconColor={"white"}
-          />
-          <Button
-            label="Coming up"
-            icon="date-range"
-            iconColor={"white"}
-          />
-        </View>
+        {list.length > 0 && (
+          <View style={styles.bottom}>
+            <Button label="Menu" icon="menu" iconColor={"white"} />
+            <Button
+              label="Location"
+              icon="location-on"
+              iconColor={"white"}
+            />
+            <Button
+              label="Coming Up"
+              icon="date-range"
+              iconColor={"white"}
+            />
+          </View>
+        )}
       </View>
     </View>
   );
