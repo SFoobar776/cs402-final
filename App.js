@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,46 +11,23 @@ import {
 import Button from "./components/Button";
 import Task from "./components/Task";
 import { save, load } from "./components/Save";
-
-function getDate() {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-
-  return `${month}-${day}-${year}`;
-}
-
-// dummy object
-const dummyObject = {
-  key: 1,
-  title: "Dentist Appt",
-  description: "Will be painful",
-  date: getDate(),
-  done: false,
-  selected: false,
-  location: {
-    lat: 0,
-    lng: 0,
-  },
-};
+import getDate from './components/Date';
 
 export default function App() {
-	const [list, setList] = useState([dummyObject]);
+	const [list, setList] = useState([]);
 	const [title, setTitle] = useState("");
 	
-	function saveOnBackgroundOrClose(nextAppState) {
-		if (nextAppState==='background' || nextAppState==='inactive') {
-			console.log('Saving.');
-			save(list);
+	useEffect(() => {  // Only load data on first render.
+		async function loadData() {
+			let data=await load();
+			setList(data);
 		}
-	}
-	
-	useEffect(() => {
-		let handleChange=AppState.addEventListener('change', saveOnBackgroundOrClose);
-		setList(load());
-		return () => handleChange.remove();
+		loadData();
 	}, []);
+	
+	useEffect(() => {  // Whenever list changes, save new data.
+		save(list);
+	}, [list]);
 
 	function addTask() {
 		if (title === "") {
