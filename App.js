@@ -1,111 +1,102 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
   FlatList,
   TextInput,
   StyleSheet,
+  AppState,
 } from "react-native";
 
 import Button from "./components/Button";
 import Task from "./components/Task";
-
-function getDate() {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-
-  return `${month}-${day}-${year}`;
-}
-
-// dummy object
-const dummyObject = {
-  key: 1,
-  title: "Dentist Appt",
-  description: "Will be painful",
-  date: getDate(),
-  done: false,
-  selected: false,
-  location: {
-    lat: 0,
-    lng: 0,
-  },
-};
+import { save, load } from "./components/Save";
+import getDate from './components/Date';
 
 export default function App() {
-  const [list, setList] = useState([dummyObject]);
-  const [title, setTitle] = useState("");
+	const [list, setList] = useState([]);
+	const [title, setTitle] = useState("");
+	
+	useEffect(() => {  // Only load data on first render.
+		async function loadData() {
+			let data=await load();
+			setList(data);
+		}
+		loadData();
+	}, []);
+	
+	useEffect(() => {  // Whenever list changes, save new data.
+		save(list);
+	}, [list]);
 
-  function addTask() {
-    if (title === "") {
-      return;
-    }
-    const newList = list.concat({
-      key: list.length + 1,
-      title: title,
-      description: "",
-      date: getDate(),
-      done: false,
-      selected: false,
-      location: {
-        lat: 0,
-        lng: 0,
-      },
-    });
+	function addTask() {
+		if (title === "") {
+			return;
+		}
+		const newList = list.concat({
+			key: list.length + 1,
+			title: title,
+			description: "",
+			date: getDate(),
+			done: false,
+			selected: false,
+			location: {
+				lat: 0,
+				lng: 0,
+			},
+		});
+		setTitle("");
+		setList(newList);
+	}
 
-    setTitle("");
-    setList(newList);
-  }
+	const renderTask = ({ item }) => (
+		<Task title={item.title} date={item.date} />
+	);
 
-  const renderTask = ({ item }) => (
-    <Task title={item.title} date={item.date} />
-  );
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.wrapper}>
-        <Text style={styles.appTitle}>My todos</Text>
-        <View style={styles.top}>
-          <TextInput
-            label="Title"
-            maxLength={30}
-            style={styles.input}
-            inlineImageLeft="search_icon"
-            placeholderTextColor={"gray"}
-            placeholder="Enter task title..."
-            onChangeText={(text) => setTitle(text)}
-            value={title}
-          ></TextInput>
-          <Button
-            label="Add"
-            onPress={() => addTask()}
-            icon="library-add"
-            iconColor={"white"}
-            backgroundColor={"green"}
-          />
-        </View>
-        <View style={styles.tasks}>
-          <FlatList data={list} renderItem={renderTask} />
-        </View>
-        {list.length > 0 && (
-          <View style={styles.bottom}>
-            <Button label="Menu" icon="menu" iconColor={"white"} />
-            <Button
-              label="Location"
-              icon="location-on"
-              iconColor={"white"}
-            />
-            <Button
-              label="Coming Up"
-              icon="date-range"
-              iconColor={"white"}
-            />
-          </View>
-        )}
-      </View>
-    </View>
-  );
+	return (
+		<View style={styles.container}>
+			<View style={styles.wrapper}>
+				<Text style={styles.appTitle}>My todos</Text>
+				<View style={styles.top}>
+					<TextInput
+						label="Title"
+						maxLength={30}
+						style={styles.input}
+						inlineImageLeft="search_icon"
+						placeholderTextColor={"gray"}
+						placeholder="Enter task title..."
+						onChangeText={(text) => setTitle(text)}
+						value={title}
+					/>
+					<Button
+						label="Add"
+						onPress={() => addTask()}
+						icon="library-add"
+						iconColor={"white"}
+						backgroundColor={"green"}
+					/>
+				</View>
+				<View style={styles.tasks}>
+					<FlatList data={list} renderItem={renderTask} />
+				</View>
+				{list.length > 0 && (
+					<View style={styles.bottom}>
+						<Button label="Menu" icon="menu" iconColor={"white"} />
+						<Button
+							label="Location"
+							icon="location-on"
+							iconColor={"white"}
+						/>
+							<Button
+							label="Coming Up"
+							icon="date-range"
+							iconColor={"white"}
+						/>
+					</View>
+				)}
+			</View>
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
