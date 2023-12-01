@@ -6,7 +6,11 @@ import {
   TextInput,
   StyleSheet,
   AppState,
+  useWindowDimensions,
 } from "react-native";
+
+import  MapView from "react-native-maps";
+import {Marker} from "react-native-maps";
 
 import Button from "./components/Button";
 import Task from "./components/Task";
@@ -14,8 +18,19 @@ import { save, load } from "./components/Save";
 import getDate from './components/Date';
 
 export default function App() {
+	const [showTask, setShowTask] = useState(true);
 	const [list, setList] = useState([]);
 	const [title, setTitle] = useState("");
+
+	const [markers, setMarks] = useState();
+	const [markerList, setMarkerList] = useState([
+		{"key":"Chicago","selected":false,"longitude":-87.6297982,"latitude":41.8781136},
+		{"key": "Boise State University","selected":false, "longitude": -116.208710, "latitude": 43.603600},
+	]);
+
+	const delta = 0.2;
+
+	const [location, setLocation] = useState([{"key":"Chicago","selected":false,"longitude":-87.6297982,"latitude":41.8781136},]);
 	
 	useEffect(() => {  // Only load data on first render.
 		async function loadData() {
@@ -53,7 +68,11 @@ export default function App() {
 		<Task title={item.title} date={item.date} />
 	);
 
-	return (
+	function change() {
+		setShowTask( showTask ? false : true);
+	}
+
+	const taskView = (
 		<View style={styles.container}>
 			<View style={styles.wrapper}>
 				<Text style={styles.appTitle}>My todos</Text>
@@ -79,24 +98,53 @@ export default function App() {
 				<View style={styles.tasks}>
 					<FlatList data={list} renderItem={renderTask} />
 				</View>
-				{list.length > 0 && (
-					<View style={styles.bottom}>
-						<Button label="Menu" icon="menu" iconColor={"white"} />
-						<Button
-							label="Location"
-							icon="location-on"
-							iconColor={"white"}
-						/>
-							<Button
-							label="Coming Up"
-							icon="date-range"
-							iconColor={"white"}
-						/>
-					</View>
-				)}
+				<View style={styles.bottom}>
+					<Button label="Menu" icon="menu" iconColor={"white"} />
+					<Button
+						label="Location"
+						icon="location-on"
+						iconColor={"white"}
+						onPress={() => change()}
+					/>
+					<Button
+						label="Coming Up"
+						icon="date-range"
+						iconColor={"white"}
+					/>
+				</View>
 			</View>
 		</View>
 	);
+
+	const mapView = (
+		<View style={styles.containerL}>
+		  <MapView 
+			style={styles.portrait}
+			region={{
+				latitude: location.latitude,
+				longitude: location.longitude,
+				latitudeDelta: delta,
+				longitudeDelta: delta,
+			}}>
+			{markers}
+		
+		</MapView >
+		<View style={styles.wrapper}>
+			<View style={styles.bottom}>
+				<Button
+					label="Home"
+					icon="home"
+					iconColor={"white"}
+					onPress={() => change()}
+				/>
+			</View>
+		</View>
+		
+		
+		</View>
+	  );
+
+	return showTask? taskView: mapView;
 }
 
 const styles = StyleSheet.create({
@@ -144,4 +192,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
   },
+  portrait: {
+	width: "100%",
+	height: "85%",
+  }
 });
