@@ -22,7 +22,7 @@ export default function App() {
   const [list, setList] = useState([]);
   const [title, setTitle] = useState("");
 
-  // State to track the currently open task's key
+  // State for tracking currently opened task's key
   const [openTaskKey, setOpenTaskKey] = useState(null);
   const toggleOpenTask = (itemKey) => {
     setOpenTaskKey(openTaskKey === itemKey ? null : itemKey);
@@ -109,7 +109,6 @@ export default function App() {
   const renderTask = ({ item }) => (
     <Task title={item.title}
           date={item.date}
-        // Pass the key of the task to add date
           onAddDate={(selectedDate) => handleAddDate(item.key, selectedDate)}
           onPress={() => handleDateChange(item.key, item.date)}
           onToggle={() => toggleOpenTask(item.key)}

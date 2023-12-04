@@ -34,20 +34,6 @@ const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen, selectedDate 
   };
 
   return (
-      // <View style={styles.task} onPress={toggle}>
-      //   <View>
-      //     <Text style={styles.taskTitle}>{title}</Text>
-      //     <Text style={styles.taskDate}>{date}</Text>
-      //   </View>
-      //   <View style={styles.taskButton}>
-      //     <Button
-      //         icon="expand-more"
-      //         size={"sm"}
-      //         iconColor="white"
-      //         onPress={onPress}
-      //     />
-      //   </View>
-      // </View>
       <View style={styles.task}>
         <View>
           <Text style={styles.taskTitle}>{title}</Text>
