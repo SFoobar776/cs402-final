@@ -22,6 +22,12 @@ export default function App() {
   const [list, setList] = useState([]);
   const [title, setTitle] = useState("");
 
+  // State to track the currently open task's key
+  const [openTaskKey, setOpenTaskKey] = useState(null);
+  const toggleOpenTask = (itemKey) => {
+    setOpenTaskKey(openTaskKey === itemKey ? null : itemKey);
+  };
+
   const [markers, setMarks] = useState();
   const [markerList, setMarkerList] = useState([
     {
@@ -71,7 +77,8 @@ export default function App() {
       key: list.length + 1,
       title: title,
       description: "",
-      date: getDate(),
+      // date: getDate(),
+      date: null,
       done: false,
       selected: false,
       location: {
@@ -83,8 +90,31 @@ export default function App() {
     setList(newList);
   }
 
+  // Handles updating the date in a task
+  const handleDateChange = (itemKey, selectedDate) => {
+    const updatedList = list.map((item) =>
+        item.key === itemKey ? { ...item, date: selectedDate } : item
+    );
+    setList(updatedList);
+  };
+
+  // Add a date for a specific task
+  const handleAddDate = (itemKey, selectedDate) => {
+    const updatedList = list.map((item) =>
+        item.key === itemKey ? { ...item, date: selectedDate } : item
+    );
+    setList(updatedList);
+  };
+
   const renderTask = ({ item }) => (
-    <Task title={item.title} date={item.date} />
+    <Task title={item.title}
+          date={item.date}
+        // Pass the key of the task to add date
+          onAddDate={(selectedDate) => handleAddDate(item.key, selectedDate)}
+          onPress={() => handleDateChange(item.key, item.date)}
+          onToggle={() => toggleOpenTask(item.key)}
+          isOpen={openTaskKey === item.key}
+    />
   );
 
   function change() {

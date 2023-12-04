@@ -1,28 +1,83 @@
-import React from "react";
-import { StyleSheet, View, Pressable, Text } from "react-native";
-
+import React, { useState } from "react";
+import { StyleSheet, View, Pressable, Text, TouchableOpacity } from "react-native";
 import Button from "./Button";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-const Task = ({ title, date, onPress }) => {
+const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen, selectedDate }) => {
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
   function toggle() {
-    alert("You pressed a task.");
+    // alert("You pressed a task.");
+    onToggle();
   }
 
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (selectedDate) => {
+    hideDatePicker();
+    onAddDate(selectedDate);
+  };
+
+  const formatDate = (date) => {
+    if (!(date instanceof Date) || isNaN(date)) {
+      return ""; // Return an empty string or any default value for invalid dates
+    }
+
+    const formattedDate = new Date(date).toLocaleDateString("en-US");
+    return formattedDate;
+  };
+
   return (
-    <View style={styles.task} onPress={toggle}>
-      <View>
-        <Text style={styles.taskTitle}>{title}</Text>
-        <Text style={styles.taskDate}>{date}</Text>
-      </View>
-      <View style={styles.taskButton}>
-        <Button
-          icon="expand-more"
-          size={"sm"}
-          iconColor="white"
-          onPress={onPress}
+      // <View style={styles.task} onPress={toggle}>
+      //   <View>
+      //     <Text style={styles.taskTitle}>{title}</Text>
+      //     <Text style={styles.taskDate}>{date}</Text>
+      //   </View>
+      //   <View style={styles.taskButton}>
+      //     <Button
+      //         icon="expand-more"
+      //         size={"sm"}
+      //         iconColor="white"
+      //         onPress={onPress}
+      //     />
+      //   </View>
+      // </View>
+      <View style={styles.task}>
+        <View>
+          <Text style={styles.taskTitle}>{title}</Text>
+          {isOpen && date && (
+              <Text style={styles.taskDate}>{formatDate(date)}</Text>
+          )}
+        </View>
+        <View style={styles.taskButton}>
+          <Button
+              icon="expand-more"
+              size={"sm"}
+              iconColor="white"
+              onPress={toggle}
+          />
+          {isOpen && (
+              <TouchableOpacity
+                  style={styles.addDateButton}
+                  onPress={showDatePicker}
+              >
+                <Text style={styles.addDateButtonText}>Add Date</Text>
+              </TouchableOpacity>
+          )}
+        </View>
+        <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
         />
       </View>
-    </View>
   );
 };
 
@@ -46,6 +101,16 @@ const styles = StyleSheet.create({
     color: "#ECECEC",
     textShadowColor: "black",
     textShadowRadius: 3,
+  },
+  addDateButton: {
+    marginTop: 10,
+    backgroundColor: "green",
+    padding: 10,
+    borderRadius: 5,
+  },
+  addDateButtonText: {
+    color: "white",
+    textAlign: "center",
   },
 });
 
