@@ -15,7 +15,7 @@ import { Marker } from "react-native-maps";
 import Button from "./components/Button";
 import Task from "./components/Task";
 import { save, load } from "./components/Save";
-import getDate from "./components/Date";
+import ComingUp from "./components/Date";
 
 export default function App() {
   const [showTask, setShowTask] = useState(true);
@@ -201,12 +201,12 @@ export default function App() {
 
   const comingUpView = (
       <View style={styles.containerComingUp}>
-        <Text>Coming Up View</Text>
+        <ComingUp tasks={list} />
         <View style={styles.wrapper}>
           <View style={styles.bottom}>
             <Button
-                label="Back to Task"
-                icon="arrow-back"
+                label="Home"
+                icon="home"
                 iconColor="white"
                 onPress={() => changeView("task")}
             />
@@ -282,8 +282,7 @@ const styles = StyleSheet.create({
   },
   containerComingUp: {
     flex: 1,
-    backgroundColor: "#AABBCC",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#8E8E8E",
+    paddingBottom: 50,
   },
 });
