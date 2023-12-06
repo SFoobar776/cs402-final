@@ -3,8 +3,9 @@ import { StyleSheet, View, Pressable, Text, TouchableOpacity } from "react-nativ
 import Button from "./Button";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen, selectedDate }) => {
+const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(date);
 
   function toggle() {
     // alert("You pressed a task.");
@@ -21,8 +22,10 @@ const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen, selectedDate 
 
   const handleConfirm = (selectedDate) => {
     hideDatePicker();
+    setSelectedDate(selectedDate);
     onAddDate(selectedDate);
   };
+
 
   const formatDate = (date) => {
     if (!(date instanceof Date) || isNaN(date)) {
@@ -38,7 +41,7 @@ const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen, selectedDate 
         <View>
           <Text style={styles.taskTitle}>{title}</Text>
           {isOpen && date && (
-              <Text style={styles.taskDate}>{formatDate(date)}</Text>
+              <Text style={styles.taskDate}>{formatDate(selectedDate)}</Text>
           )}
         </View>
         <View style={styles.taskButton}>
@@ -60,6 +63,7 @@ const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen, selectedDate 
         <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"
+            date={selectedDate ? new Date(selectedDate) : new Date()} // to save date in modal
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
         />
