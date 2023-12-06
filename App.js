@@ -19,6 +19,7 @@ import getDate from "./components/Date";
 
 export default function App() {
   const [showTask, setShowTask] = useState(true);
+  const [showComingUp, setShowComingUp] = useState(false);
   const [list, setList] = useState([]);
   const [title, setTitle] = useState("");
 
@@ -78,7 +79,7 @@ export default function App() {
       title: title,
       description: "",
       // date: getDate(),
-      date: null,
+      date: new Date(),
       done: false,
       selected: false,
       location: {
@@ -96,43 +97,15 @@ export default function App() {
         item.key === itemKey ? { ...item, date: selectedDate } : item
     );
     setList(updatedList);
-    sortTasksByDate();
   };
 
 
-// Function to sort tasks by date (Coming Up first)
-  const sortTasksByDate = () => {
-    try {
-      const sortedTasks = list.slice().sort((taskA, taskB) => {
-        const dateA = taskA.date ? new Date(taskA.date) : Infinity;
-        const dateB = taskB.date ? new Date(taskB.date) : Infinity;
-
-
-        console.log('Date A:', dateA);
-        console.log('Date B:', dateB);
-      });
-
-
-      setList(sortedTasks);
-    } catch (error) {
-      console.error("Sorting error:", error);
-    }
-  };
-
-
-// Add a date for a specific task
+  // Add a date for a specific task
   const handleAddDate = (itemKey, selectedDate) => {
     const updatedList = list.map((item) =>
         item.key === itemKey ? { ...item, date: selectedDate } : item
     );
     setList(updatedList);
-    sortTasksByDate();
-  };
-
-
-  const handleComingUpPress = () => {
-    console.log("Coming Up button pressed.");
-    sortTasksByDate();
   };
 
   const renderTask = ({ item }) => (
@@ -147,6 +120,11 @@ export default function App() {
 
   function change() {
     setShowTask(showTask ? false : true);
+  }
+
+  function changeView(view) {
+    setShowTask(view === "task");
+    setShowComingUp(view === "comingUp");
   }
 
   const taskView = (
@@ -188,7 +166,7 @@ export default function App() {
                 label="Coming Up"
                 icon="date-range"
                 iconColor={"white"}
-                onPress={handleComingUpPress}
+                onPress={() => changeView("comingUp")}
             />
           </View>
         </View>
@@ -221,7 +199,37 @@ export default function App() {
       </View>
   );
 
-  return showTask ? taskView : mapView;
+  const comingUpView = (
+      <View style={styles.containerComingUp}>
+        <Text>Coming Up View</Text>
+        <View style={styles.wrapper}>
+          <View style={styles.bottom}>
+            <Button
+                label="Back to Task"
+                icon="arrow-back"
+                iconColor="white"
+                onPress={() => changeView("task")}
+            />
+          </View>
+        </View>
+      </View>
+  );
+
+  // return showTask ? taskView : mapView;
+  let currentView;
+  if (showTask) {
+    currentView = taskView;
+  } else if (showComingUp) {
+    currentView = comingUpView;
+  } else {
+    currentView = mapView;
+  }
+
+  return (
+      <View style={styles.container}>
+        {currentView}
+      </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -271,5 +279,11 @@ const styles = StyleSheet.create({
   portrait: {
     width: "100%",
     height: "80%",
+  },
+  containerComingUp: {
+    flex: 1,
+    backgroundColor: "#AABBCC",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
