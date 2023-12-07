@@ -12,6 +12,9 @@ import {
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
 
+import Geocoder from 'react-native-geocoding';
+import * as Location from 'expo-location';
+
 import Button from "./components/Button";
 import Task from "./components/Task";
 import { save, load } from "./components/Save";
@@ -29,32 +32,29 @@ export default function App() {
     setOpenTaskKey(openTaskKey === itemKey ? null : itemKey);
   };
 
-  const [markers, setMarks] = useState();
-  const [markerList, setMarkerList] = useState([
-    {
-      key: "Chicago",
-      selected: false,
-      longitude: -87.6297982,
-      latitude: 41.8781136,
-    },
-    {
-      key: "Boise State University",
-      selected: false,
-      longitude: -116.20871,
-      latitude: 43.6036,
-    },
-  ]);
-
   const delta = 0.2;
+  const [marker, setMarker] = useState();
+  const [location, setLocation] = useState([]);
 
-  const [location, setLocation] = useState([
-    {
-      key: "Chicago",
-      selected: false,
-      longitude: -87.6297982,
-      latitude: 41.8781136,
-    },
-  ]);
+  const getLocationAsync = async () =>{
+    let {status}  = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log("status:", status);
+    } else {
+      console.log("status:", status);
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation({key: "current location", selected: true, longitude: location.coords.longitude, latitude: location.coords.latitude });
+
+      var newm = <Marker
+                  coordinate={{ 
+                    longitude: location.coords.longitude, 
+                    latitude: location.coords.latitude
+                  }}
+                  title={"current location"}
+                />
+      setMarker(newm);
+    }
+  }
 
   useEffect(() => {
     // Only load data on first render.
@@ -63,6 +63,7 @@ export default function App() {
       setList(data);
     }
     loadData();
+    getLocationAsync();
   }, []);
 
   useEffect(() => {
@@ -184,7 +185,7 @@ export default function App() {
               longitudeDelta: delta,
             }}
         >
-          {markers}
+          {marker}
         </MapView>
         <View style={styles.wrapper}>
           <View style={styles.bottom}>
