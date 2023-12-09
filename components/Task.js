@@ -77,6 +77,7 @@ const Task = ({
             <Button
               icon="delete"
               iconColor="white"
+              backgroundColor="red"
               onPress={onRemove}
             />
           </View>
