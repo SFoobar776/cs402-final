@@ -1,10 +1,25 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Pressable, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Pressable,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import Button from "./Button";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen }) => {
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+const Task = ({
+  title,
+  date,
+  onPress,
+  onAddDate,
+  onToggle,
+  onRemove,
+  isOpen,
+}) => {
+  const [isDatePickerVisible, setDatePickerVisibility] =
+    useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
   function toggle() {
@@ -35,38 +50,47 @@ const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen }) => {
   };
 
   return (
-      <View style={styles.task}>
-        <View>
-          <Text style={styles.taskTitle}>{title}</Text>
-          {isOpen && date && (
-              <Text style={styles.taskDate}>{formatDate(selectedDate)}</Text>
-          )}
-        </View>
-        <View style={styles.taskButton}>
-          <Button
-              icon="expand-more"
-              size={"sm"}
-              iconColor="white"
-              onPress={toggle}
-          />
-          {isOpen && (
-              <TouchableOpacity
-                  style={styles.addDateButton}
-                  onPress={showDatePicker}
-              >
-                <Text style={styles.addDateButtonText}>Add Date</Text>
-              </TouchableOpacity>
-          )}
-        </View>
-        <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode="date"
-            // value={selectedDate || new Date()}
-            date={selectedDate ? new Date(selectedDate) : new Date()} // to save date in modal
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-        />
+    <View style={styles.task}>
+      <View>
+        <Text style={styles.taskTitle}>{title}</Text>
+        {isOpen && date && (
+          <Text style={styles.taskDate}>
+            {formatDate(selectedDate)}
+          </Text>
+        )}
       </View>
+      <View style={styles.taskButton}>
+        <Button
+          icon="expand-more"
+          size={"sm"}
+          iconColor="white"
+          onPress={toggle}
+        />
+        {isOpen && (
+          <View>
+            <TouchableOpacity
+              style={styles.addDateButton}
+              onPress={showDatePicker}
+            >
+              <Text style={styles.addDateButtonText}>Add Date</Text>
+            </TouchableOpacity>
+            <Button
+              icon="delete"
+              iconColor="white"
+              onPress={onRemove}
+            />
+          </View>
+        )}
+      </View>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        // value={selectedDate || new Date()}
+        date={selectedDate ? new Date(selectedDate) : new Date()} // to save date in modal
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
+    </View>
   );
 };
 

@@ -94,29 +94,37 @@ export default function App() {
   // Handles updating the date in a task
   const handleDateChange = (itemKey, selectedDate) => {
     const updatedList = list.map((item) =>
-        item.key === itemKey ? { ...item, date: selectedDate } : item
+      item.key === itemKey ? { ...item, date: selectedDate } : item
     );
     setList(updatedList);
   };
 
-
   // Add a date for a specific task
   const handleAddDate = (itemKey, selectedDate) => {
     const updatedList = list.map((item) =>
-        item.key === itemKey ? { ...item, date: selectedDate } : item
+      item.key === itemKey ? { ...item, date: selectedDate } : item
     );
     setList(updatedList);
   };
 
   const renderTask = ({ item }) => (
-      <Task title={item.title}
-            date={item.date}
-            onAddDate={(selectedDate) => handleAddDate(item.key, selectedDate)}
-            onPress={() => handleDateChange(item.key, item.date)}
-            onToggle={() => toggleOpenTask(item.key)}
-            isOpen={openTaskKey === item.key}
-      />
+    <Task
+      title={item.title}
+      date={item.date}
+      onAddDate={(selectedDate) =>
+        handleAddDate(item.key, selectedDate)
+      }
+      onPress={() => handleDateChange(item.key, item.date)}
+      onToggle={() => toggleOpenTask(item.key)}
+      isOpen={openTaskKey === item.key}
+      onRemove={() => removeTask(item.key)}
+    />
   );
+
+  function removeTask(itemKey) {
+    const newList = list.filter((item) => item.key !== itemKey);
+    setList(newList);
+  }
 
   function change() {
     setShowTask(showTask ? false : true);
@@ -128,91 +136,91 @@ export default function App() {
   }
 
   const taskView = (
-      <View style={styles.container}>
-        <View style={styles.wrapper}>
-          <Text style={styles.appTitle}>My todos</Text>
-          <View style={styles.top}>
-            <TextInput
-                label="Title"
-                maxLength={30}
-                style={styles.input}
-                inlineImageLeft="search_icon"
-                placeholderTextColor={"gray"}
-                placeholder="Enter task title..."
-                onChangeText={(text) => setTitle(text)}
-                value={title}
-            />
-            <Button
-                style={{ width: 30 }}
-                label="Add"
-                onPress={() => addTask()}
-                icon="library-add"
-                iconColor={"white"}
-                backgroundColor={"green"}
-            />
-          </View>
-          <View style={styles.tasks}>
-            <FlatList data={list} renderItem={renderTask} />
-          </View>
-          <View style={styles.bottom}>
-            <Button label="Menu" icon="menu" iconColor={"white"} />
-            <Button
-                label="Location"
-                icon="location-on"
-                iconColor={"white"}
-                onPress={() => change()}
-            />
-            <Button
-                label="Coming Up"
-                icon="date-range"
-                iconColor={"white"}
-                onPress={() => changeView("comingUp")}
-            />
-          </View>
+    <View style={styles.container}>
+      <View style={styles.wrapper}>
+        <Text style={styles.appTitle}>My todos</Text>
+        <View style={styles.top}>
+          <TextInput
+            label="Title"
+            maxLength={30}
+            style={styles.input}
+            inlineImageLeft="search_icon"
+            placeholderTextColor={"gray"}
+            placeholder="Enter task title..."
+            onChangeText={(text) => setTitle(text)}
+            value={title}
+          />
+          <Button
+            style={{ width: 30 }}
+            label="Add"
+            onPress={() => addTask()}
+            icon="library-add"
+            iconColor={"white"}
+            backgroundColor={"green"}
+          />
+        </View>
+        <View style={styles.tasks}>
+          <FlatList data={list} renderItem={renderTask} />
+        </View>
+        <View style={styles.bottom}>
+          <Button label="Menu" icon="menu" iconColor={"white"} />
+          <Button
+            label="Location"
+            icon="location-on"
+            iconColor={"white"}
+            onPress={() => change()}
+          />
+          <Button
+            label="Coming Up"
+            icon="date-range"
+            iconColor={"white"}
+            onPress={() => changeView("comingUp")}
+          />
         </View>
       </View>
+    </View>
   );
 
   const mapView = (
-      <View style={styles.containerL}>
-        <MapView
-            style={styles.portrait}
-            region={{
-              latitude: location.latitude,
-              longitude: location.longitude,
-              latitudeDelta: delta,
-              longitudeDelta: delta,
-            }}
-        >
-          {markers}
-        </MapView>
-        <View style={styles.wrapper}>
-          <View style={styles.bottom}>
-            <Button
-                label="Home"
-                icon="home"
-                iconColor={"white"}
-                onPress={() => change()}
-            />
-          </View>
+    <View style={styles.containerL}>
+      <MapView
+        style={styles.portrait}
+        region={{
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: delta,
+          longitudeDelta: delta,
+        }}
+      >
+        {markers}
+      </MapView>
+      <View style={styles.wrapper}>
+        <View style={styles.bottom}>
+          <Button
+            label="Home"
+            icon="home"
+            iconColor={"white"}
+            onPress={() => change()}
+          />
         </View>
       </View>
+    </View>
   );
 
   const comingUpView = (
-      <View style={styles.containerComingUp}>
-        <ComingUp tasks={list} />
-        <View style={styles.wrapper}>
-          <View style={styles.bottom}>
-            <Button
-                label="Home"
-                icon="home"
-                iconColor="white"
-                onPress={() => changeView("task")}
-            />
-          </View>
+    <View style={styles.containerComingUp}>
+      <ComingUp tasks={list} />
+      <View style={styles.wrapper}>
+        <View style={styles.bottom}>
+          <Button
+            label="Home"
+            icon="home"
+            iconColor="white"
+            onPress={() => changeView("task")}
+          />
         </View>
       </View>
+    </View>
   );
 
   // return showTask ? taskView : mapView;
@@ -225,11 +233,7 @@ export default function App() {
     currentView = mapView;
   }
 
-  return (
-      <View style={styles.container}>
-        {currentView}
-      </View>
-  );
+  return <View style={styles.container}>{currentView}</View>;
 }
 
 const styles = StyleSheet.create({
