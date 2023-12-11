@@ -14,7 +14,8 @@ const Task = ({
   title,
   date,
   onPress,
-  onAddDate, onAddLoc,
+  onAddDate, 
+  onAddLoc,
   onToggle,
   onRemove,
   isOpen,
@@ -76,6 +77,14 @@ const Task = ({
             >
               <Text style={styles.addDateButtonText}>Add Date</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.addDateButton}
+              onPress={() =>{setShowPrompt(true)}}
+            >
+              <Text style={styles.addDateButtonText}>Add Location</Text>
+            </TouchableOpacity>
+
             <Button
               icon="delete"
               iconColor="white"
@@ -93,6 +102,13 @@ const Task = ({
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
+      <DialogInput isDialogVisible={showPrompt} 
+            title="Enter Address"
+            message="Enter The Address To Add"
+            submitInput={ (inputText) =>{setShowPrompt(false); onAddLoc(inputText)}}
+            closeDialog={() => {setShowPrompt(false)}}
+            >
+        </DialogInput>
     </View>
   );
 };

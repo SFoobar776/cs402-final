@@ -148,7 +148,7 @@ export default function App() {
       onAddDate={(selectedDate) =>
         handleAddDate(item.key, selectedDate)
       }
-            onAddLoc={(inputText) => handleAddLocation(item.key, inputText)}
+      onAddLoc={(inputText) => handleAddLocation(item.key, inputText)}
       onPress={() => handleDateChange(item.key, item.date)}
       onToggle={() => toggleOpenTask(item.key)}
       isOpen={openTaskKey === item.key}
