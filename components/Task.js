@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { StyleSheet, View, Pressable, Text, TouchableOpacity } from "react-native";
 import Button from "./Button";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import DialogInput from 'react-native-dialog-input';
 
-const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen }) => {
+const Task = ({ title, date, onPress, onAddDate, onAddLoc, onToggle, isOpen }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
 
   function toggle() {
@@ -56,7 +58,19 @@ const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen }) => {
               >
                 <Text style={styles.addDateButtonText}>Add Date</Text>
               </TouchableOpacity>
+              
           )}
+
+          {isOpen && (
+              <TouchableOpacity
+                  style={styles.addDateButton}
+                  onPress={() => {setShowPrompt(true)}}
+              >
+                <Text style={styles.addDateButtonText}>Add Location</Text>
+              </TouchableOpacity>
+              
+          )}
+          
         </View>
         <DateTimePickerModal
             isVisible={isDatePickerVisible}
@@ -65,7 +79,18 @@ const Task = ({ title, date, onPress, onAddDate, onToggle, isOpen }) => {
             date={selectedDate ? new Date(selectedDate) : new Date()} // to save date in modal
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
-        />
+        ></DateTimePickerModal>
+
+        <DialogInput 
+          isDialogVisible={showPrompt}  
+          title="Enter Address"
+          message="Enter The Address To Add"
+          submitInput={ (inputText) =>{
+            setShowPrompt(false); 
+            onAddLoc(inputText);}}
+          closeDialog={() => {setShowPrompt(false)}}
+          >
+        </DialogInput>
       </View>
   );
 };

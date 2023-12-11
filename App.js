@@ -20,6 +20,8 @@ import Task from "./components/Task";
 import { save, load } from "./components/Save";
 import ComingUp from "./components/Date";
 
+Geocoder.init("AIzaSyDqW8jK0xxnIRKTKXACxIK-q3UerQTiCsA");
+
 export default function App() {
   const [showTask, setShowTask] = useState(true);
   const [showComingUp, setShowComingUp] = useState(false);
@@ -45,14 +47,21 @@ export default function App() {
       let location = await Location.getCurrentPositionAsync({});
       setLocation({key: "current location", selected: true, longitude: location.coords.longitude, latitude: location.coords.latitude });
 
-      var newm = <Marker
+      let newm = <Marker
                   coordinate={{ 
                     longitude: location.coords.longitude, 
                     latitude: location.coords.latitude
                   }}
                   title={"current location"}
                 />
-      setMarker(newm);
+                
+      let mark = list.map((item) => {
+        var newm = <Marker
+                    coordinate={{latitude: item.location.lat, longitude: item.location.lng}}
+                    title={item.title}
+                    />
+        return newm});
+      setMarker([...mark, newm]);
     }
   }
 
@@ -69,6 +78,9 @@ export default function App() {
   useEffect(() => {
     // Whenever list changes, save new data.
     save(list);
+    getLocationAsync();
+
+
   }, [list]);
 
   function addTask() {
@@ -100,19 +112,40 @@ export default function App() {
     setList(updatedList);
   };
 
+ // Add a date for a specific task
+ const handleAddDate = (itemKey, selectedDate) => {
+  const updatedList = list.map((item) =>
+    item.key === itemKey ? { ...item, date: selectedDate } : item
+  );
+  setList(updatedList);
+};
 
-  // Add a date for a specific task
-  const handleAddDate = (itemKey, selectedDate) => {
-    const updatedList = list.map((item) =>
-        item.key === itemKey ? { ...item, date: selectedDate } : item
-    );
-    setList(updatedList);
+  const handleAddLocation = (itemKey, alocation) => {
+    var location = {};
+    Geocoder.from(alocation)
+    .then(json => {
+      console.log(alocation);
+      location = json.results[0].geometry.location;
+      console.log(location);
+      const updatedList = list.map((item) => 
+        item.key === itemKey ? { ...item, location: {lng:location.lng, lat: location.lat} } : item
+
+      );
+
+      updatedList.map((item) =>{
+        console.log(item)
+      });
+      // console.log(updatedList);
+      setList(updatedList);
+    })
+    .catch(error => console.warn(error));
   };
 
   const renderTask = ({ item }) => (
       <Task title={item.title}
             date={item.date}
             onAddDate={(selectedDate) => handleAddDate(item.key, selectedDate)}
+            onAddLoc={(inputText) => handleAddLocation(item.key, inputText)}
             onPress={() => handleDateChange(item.key, item.date)}
             onToggle={() => toggleOpenTask(item.key)}
             isOpen={openTaskKey === item.key}
