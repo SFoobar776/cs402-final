@@ -20,6 +20,7 @@
     "react-native-dialog-input": "^1.0.8",
     "react-native-geocoding": "^0.5.0",
     "react-native-maps": "1.7.1",
+    "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-modal-datetime-picker": "^17.1.0"
   },
   "private": true
