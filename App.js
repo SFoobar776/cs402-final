@@ -198,7 +198,6 @@ export default function App() {
           <FlatList data={list} renderItem={renderTask} />
         </View>
         <View style={styles.bottom}>
-          <Button label="Menu" icon="menu" iconColor={"white"} />
           <Button
             label="Location"
             icon="location-on"
