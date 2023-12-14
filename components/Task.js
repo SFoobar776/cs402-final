@@ -1,20 +1,18 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
   View,
-  Pressable,
   Text,
+  StyleSheet,
   TouchableOpacity,
 } from "react-native";
 import Button from "./Button";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import DialogInput from 'react-native-dialog-input';
+import DialogInput from "react-native-dialog-input";
 
 const Task = ({
   title,
   date,
-  onPress,
-  onAddDate, 
+  onAddDate,
   onAddLoc,
   onToggle,
   onRemove,
@@ -26,7 +24,6 @@ const Task = ({
   const [selectedDate, setSelectedDate] = useState(null);
 
   function toggle() {
-    // alert("You pressed a task.");
     onToggle();
   }
 
@@ -39,7 +36,6 @@ const Task = ({
   };
 
   const handleConfirm = (selectedDate) => {
-    // setSelectedDate(selectedDate || null);
     setSelectedDate(selectedDate);
     onAddDate(selectedDate);
     hideDatePicker();
@@ -80,9 +76,13 @@ const Task = ({
 
             <TouchableOpacity
               style={styles.addDateButton}
-              onPress={() =>{setShowPrompt(true)}}
+              onPress={() => {
+                setShowPrompt(true);
+              }}
             >
-              <Text style={styles.addDateButtonText}>Add Location</Text>
+              <Text style={styles.addDateButtonText}>
+                Add Location
+              </Text>
             </TouchableOpacity>
 
             <Button
@@ -97,18 +97,22 @@ const Task = ({
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
-        // value={selectedDate || new Date()}
         date={selectedDate ? new Date(selectedDate) : new Date()} // to save date in modal
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
-      <DialogInput isDialogVisible={showPrompt} 
-            title="Enter Address"
-            message="Enter The Address To Add"
-            submitInput={ (inputText) =>{setShowPrompt(false); onAddLoc(inputText)}}
-            closeDialog={() => {setShowPrompt(false)}}
-            >
-        </DialogInput>
+      <DialogInput
+        isDialogVisible={showPrompt}
+        title="Enter Location"
+        message="Relate your task to a location"
+        submitInput={(inputText) => {
+          setShowPrompt(false);
+          onAddLoc(inputText);
+        }}
+        closeDialog={() => {
+          setShowPrompt(false);
+        }}
+      ></DialogInput>
     </View>
   );
 };
@@ -120,7 +124,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
-    marginHorizontal: 10,
     alignItems: "center",
     justifyContent: "space-between",
   },

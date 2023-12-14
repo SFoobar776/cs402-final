@@ -5,15 +5,13 @@ import {
   FlatList,
   TextInput,
   StyleSheet,
-  AppState,
-  useWindowDimensions,
 } from "react-native";
 
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
 
-import Geocoder from 'react-native-geocoding';
-import * as Location from 'expo-location';
+import Geocoder from "react-native-geocoding";
+import * as Location from "expo-location";
 
 import Button from "./components/Button";
 import Task from "./components/Task";
@@ -38,32 +36,46 @@ export default function App() {
   const [marker, setMarker] = useState();
   const [location, setLocation] = useState([]);
 
-  const getLocationAsync = async () =>{
-    let {status}  = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
+  const getLocationAsync = async () => {
+    let { status } =
+      await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
       console.log("status:", status);
     } else {
       console.log("status:", status);
       let location = await Location.getCurrentPositionAsync({});
-      setLocation({key: "current location", selected: true, longitude: location.coords.longitude, latitude: location.coords.latitude });
+      setLocation({
+        key: "current location",
+        selected: true,
+        longitude: location.coords.longitude,
+        latitude: location.coords.latitude,
+      });
 
-      let newm = <Marker
-                  coordinate={{ 
-                    longitude: location.coords.longitude, 
-                    latitude: location.coords.latitude
-                  }}
-                  title={"current location"}
-                />
-                
+      let newm = (
+        <Marker
+          coordinate={{
+            longitude: location.coords.longitude,
+            latitude: location.coords.latitude,
+          }}
+          title={"current location"}
+        />
+      );
+
       let mark = list.map((item) => {
-        var newm = <Marker
-                    coordinate={{latitude: item.location.lat, longitude: item.location.lng}}
-                    title={item.title}
-                    />
-        return newm});
+        var newm = (
+          <Marker
+            coordinate={{
+              latitude: item.location.lat,
+              longitude: item.location.lng,
+            }}
+            title={item.title}
+          />
+        );
+        return newm;
+      });
       setMarker([...mark, newm]);
     }
-  }
+  };
 
   useEffect(() => {
     // Only load data on first render.
@@ -79,8 +91,6 @@ export default function App() {
     // Whenever list changes, save new data.
     save(list);
     getLocationAsync();
-
-
   }, [list]);
 
   function addTask() {
@@ -91,7 +101,6 @@ export default function App() {
       key: list.length + 1,
       title: title,
       description: "",
-      // date: getDate(),
       date: new Date(),
       done: false,
       selected: false,
@@ -112,33 +121,37 @@ export default function App() {
     setList(updatedList);
   };
 
- // Add a date for a specific task
- const handleAddDate = (itemKey, selectedDate) => {
-  const updatedList = list.map((item) =>
-    item.key === itemKey ? { ...item, date: selectedDate } : item
-  );
-  setList(updatedList);
-};
+  // Add a date for a specific task
+  const handleAddDate = (itemKey, selectedDate) => {
+    const updatedList = list.map((item) =>
+      item.key === itemKey ? { ...item, date: selectedDate } : item
+    );
+    setList(updatedList);
+  };
 
   const handleAddLocation = (itemKey, alocation) => {
     var location = {};
     Geocoder.from(alocation)
-    .then(json => {
-      console.log(alocation);
-      location = json.results[0].geometry.location;
-      console.log(location);
-      const updatedList = list.map((item) => 
-        item.key === itemKey ? { ...item, location: {lng:location.lng, lat: location.lat} } : item
+      .then((json) => {
+        console.log(alocation);
+        location = json.results[0].geometry.location;
+        console.log(location);
+        const updatedList = list.map((item) =>
+          item.key === itemKey
+            ? {
+                ...item,
+                location: { lng: location.lng, lat: location.lat },
+              }
+            : item
+        );
 
-      );
-
-      updatedList.map((item) =>{
-        console.log(item)
-      });
-      // console.log(updatedList);
-      setList(updatedList);
-    })
-    .catch(error => console.warn(error));
+        updatedList.map((item) => {
+          console.log(item);
+        });
+        // console.log(updatedList);
+        setList(updatedList);
+      })
+      .catch((error) => console.warn(error));
   };
 
   const renderTask = ({ item }) => (
@@ -293,7 +306,7 @@ const styles = StyleSheet.create({
     padding: 5,
     height: 50,
     borderRadius: 10,
-    justifyContent: "space-between",
+    justifyContent: "center",
     backgroundColor: "black",
     flexDirection: "row",
     alignItems: "center",

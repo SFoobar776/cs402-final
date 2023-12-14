@@ -3,12 +3,12 @@ import { StyleSheet, Pressable, Text } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const Button = ({
-  onPress,
-  label,
   size,
-  backgroundColor,
   icon,
+  label,
+  onPress,
   iconColor,
+  backgroundColor,
 }) => {
   return (
     <Pressable
